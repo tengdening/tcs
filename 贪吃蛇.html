@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>贪吃蛇</title>
+</head>
+<style>
+	.scene{
+		width: 500px;height: 500px;
+		margin:0 auto;
+		border:1px solid #000;
+		background: url(1.jpg)0 0 no-repeat;
+		background-size: 800px auto;background-position: 30% 30%;
+	}
+
+	.block{
+		width: 24px;height: 24px;
+		border-right: 1px solid #fff;
+		border-bottom: 1px solid #fff;
+		float: left;
+	}
+	.snakebody{
+		background: #A08050;border-radius: 50%;position: relative;
+	}
+	.snakehead{
+		background: #68522F;position: relative;border-radius: 50%;
+	}
+	.food{
+		background: yellow;border-radius: 10px;
+	}
+	.aa{
+		background: green;width: 6px;height: 6px;position: absolute;right: 5px;top: 5px;
+		border-radius: 50%;
+	}
+	.bb{
+		background: green;width: 6px;height: 6px;position: absolute;right: 5px;bottom: 5px;
+		border-radius: 50%;
+	}
+	.cc{
+		background: green;width: 6px;height: 6px;position: absolute;left: 5px;bottom: 5px;
+		border-radius: 50%;
+	}
+	.dd{
+		background: green;width: 6px;height: 6px;position: absolute;left: 5px;top: 5px;
+		border-radius: 50%;
+	}
+	.ee{
+		background: green;width: 6px;height: 6px;position: absolute;left: 50%;top: 50%;
+		border-radius: 50%;margin-top: -3px;margin-left: -3px;
+	}
+</style>
+
+<body>
+	<div class="scene">
+		
+	</div>
+</body>
+<script src="jquery.js"></script>
+<script>
+//先循环20个表格，给它设置类名，给他设置地址，给他插入到scene这个大盒子里边
+//关于类名的选择器不需要加点，其他大多数需要加点。
+	for (var i = 0; i < 20; i++) {
+		for (var j = 0; j < 20; j++) {
+			$("<div>").addClass("block").attr("id",j+"-"+i).appendTo(".scene");
+		};
+	};
+	//建立数组，把这3个位置建立出来
+	var snakearr=[{x:0,y:0},{x:1,y:0},{x:2,y:0}];
+	//它的头的位置。
+	var snakehead=snakearr[snakearr.length-1];
+	function diawsnake(){
+		$(".snakehead").removeClass("snakehead");
+		$(".snakebody").removeClass("snakebody");
+		$(".aa").removeClass("aa");
+		$(".bb").removeClass("bb");
+		$(".cc").removeClass("cc");
+		$(".dd").removeClass("dd");
+		$(".ee").removeClass("ee");
+		//循环出它的身体的位置
+		$.each(snakearr,function(i,v){
+			$("#"+v.x+"-"+v.y).addClass("snakebody");
+		})
+		//它的头的位置
+		$("#"+snakehead.x+"-"+snakehead.y).addClass("snakehead");
+		$("<div>").addClass("aa").appendTo(".snakehead");
+		$("<div>").addClass("bb").appendTo(".snakehead");
+		$("<div>").addClass("cc").appendTo(".snakehead");
+		$("<div>").addClass("dd").appendTo(".snakehead");
+		$("<div>").addClass("ee").appendTo(".snakebody");
+	}
+
+
+	diawsnake()
+	var dir="r";
+	function move(){
+		switch(dir){
+			case "r":snakehead={x:snakehead.x+1,y:snakehead.y};
+			break;
+			case "l":snakehead={x:snakehead.x-1,y:snakehead.y};
+			break;
+			case "t":snakehead={x:snakehead.x,y:snakehead.y-1};
+			break;
+			case "b":snakehead={x:snakehead.x,y:snakehead.y+1};
+			break;
+		}
+		if ($("#"+snakehead.x+"-"+snakehead.y).length==0||$("#"+snakehead.x+"-"+snakehead.y).hasClass("snakebody")) {
+			alert("游戏失败");
+			clearInterval(t);
+			return;
+		};
+		if (!$("#"+snakehead.x+"-"+snakehead.y).hasClass("food")) {
+			snakearr.shift();
+		}else{
+			$(".food").removeClass("food");
+			createFood();
+		}
+		snakearr.push(snakehead);
+		diawsnake();
+		
+	}
+	$(document).keydown(function(e){
+		var kc=e.keyCode;
+		switch(kc){
+			case 65:
+			case 37:dir="l";
+			break;
+			case 87:
+			case 38:dir="t";
+			break;
+			case 68:
+			case 39:dir="r";
+			break;
+			case 83:
+			case 40:dir="b";
+		}
+	})
+	var t=setInterval(move,400)
+	function createFood(){
+		do{
+			var num1=Math.round(Math.random()*19);
+			var num2=Math.round(Math.random()*19);
+		}while($("#"+num1+"-"+num2).hasClass("snakebody"));
+		$("#"+num1+"-"+num2).addClass("food");
+	}
+	createFood();
+</script>
+</html>
